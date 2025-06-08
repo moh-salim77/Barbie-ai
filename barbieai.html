@@ -1,0 +1,521 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Barbie AI Lifestyle Assistant</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #ffc2d1, #ffb6c1, #ff9eb6, #ff85a1);
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            overflow: hidden;
+        }
+        
+        .container {
+            width: 100%;
+            max-width: 900px;
+            height: 85vh;
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 20px;
+            box-shadow: 0 15px 40px rgba(214, 51, 108, 0.4);
+            display: flex;
+            overflow: hidden;
+        }
+        
+        .sidebar {
+            width: 35%;
+            background: linear-gradient(to bottom, #ff3385, #ff66a3);
+            padding: 25px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            color: white;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .sidebar::before {
+            content: "";
+            position: absolute;
+            top: -50px;
+            left: -50px;
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.1);
+        }
+        
+        .sidebar::after {
+            content: "";
+            position: absolute;
+            bottom: -80px;
+            right: -80px;
+            width: 200px;
+            height: 200px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.1);
+        }
+        
+        .avatar {
+            width: 180px;
+            height: 180px;
+            background: linear-gradient(45deg, #ff85a1, #ff3385);
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-top: 20px;
+            position: relative;
+            z-index: 2;
+            border: 5px solid white;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+        }
+        
+        .avatar img {
+            width: 90%;
+            height: 90%;
+            object-fit: contain;
+        }
+        
+        .ai-name {
+            font-size: 28px;
+            font-weight: 700;
+            margin: 25px 0 10px;
+            text-align: center;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+            z-index: 2;
+        }
+        
+        .ai-title {
+            font-size: 16px;
+            margin-bottom: 25px;
+            text-align: center;
+            opacity: 0.9;
+            z-index: 2;
+        }
+        
+        .features {
+            width: 100%;
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 15px;
+            margin-top: 15px;
+            z-index: 2;
+        }
+        
+        .features h3 {
+            text-align: center;
+            margin-bottom: 15px;
+            font-size: 18px;
+        }
+        
+        .features ul {
+            list-style-type: none;
+            padding: 0 10px;
+        }
+        
+        .features li {
+            padding: 8px 0;
+            display: flex;
+            align-items: center;
+        }
+        
+        .features li i {
+            margin-right: 10px;
+            font-size: 14px;
+        }
+        
+        .chat-container {
+            width: 65%;
+            display: flex;
+            flex-direction: column;
+            padding: 20px;
+        }
+        
+        .chat-header {
+            display: flex;
+            align-items: center;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #ffe5ec;
+        }
+        
+        .chat-header h2 {
+            color: #ff3385;
+            font-size: 24px;
+            margin-left: 15px;
+        }
+        
+        .chat-messages {
+            flex: 1;
+            overflow-y: auto;
+            padding: 20px 10px;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .message {
+            max-width: 80%;
+            padding: 12px 18px;
+            margin-bottom: 15px;
+            border-radius: 18px;
+            position: relative;
+            animation: fadeIn 0.3s ease;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .ai-message {
+            background: #ffecf1;
+            align-self: flex-start;
+            border-bottom-left-radius: 5px;
+            color: #333;
+        }
+        
+        .user-message {
+            background: linear-gradient(to right, #ff3385, #ff66a3);
+            color: white;
+            align-self: flex-end;
+            border-bottom-right-radius: 5px;
+        }
+        
+        .message-time {
+            font-size: 11px;
+            opacity: 0.7;
+            margin-top: 5px;
+            text-align: right;
+        }
+        
+        .chat-input {
+            display: flex;
+            padding: 15px 5px 5px;
+            border-top: 2px solid #ffe5ec;
+        }
+        
+        .chat-input input {
+            flex: 1;
+            padding: 14px 20px;
+            border: 2px solid #ffd1dc;
+            border-radius: 30px;
+            outline: none;
+            font-size: 16px;
+            transition: all 0.3s;
+        }
+        
+        .chat-input input:focus {
+            border-color: #ff85a1;
+            box-shadow: 0 0 0 3px rgba(255, 133, 161, 0.2);
+        }
+        
+        .chat-input button {
+            background: linear-gradient(to right, #ff3385, #ff66a3);
+            border: none;
+            color: white;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            margin-left: 10px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .chat-input button:hover {
+            transform: scale(1.05);
+            box-shadow: 0 5px 15px rgba(255, 51, 133, 0.4);
+        }
+        
+        .quick-actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            padding: 15px 0;
+        }
+        
+        .quick-btn {
+            background: rgba(255, 133, 161, 0.2);
+            border: none;
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-size: 14px;
+            color: #ff3385;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .quick-btn:hover {
+            background: rgba(255, 51, 133, 0.2);
+            transform: translateY(-2px);
+        }
+        
+        .typing-indicator {
+            display: none;
+            padding: 12px 18px;
+            background: #ffecf1;
+            border-radius: 18px;
+            align-self: flex-start;
+            margin-bottom: 15px;
+        }
+        
+        .typing-indicator span {
+            height: 8px;
+            width: 8px;
+            background: #ff85a1;
+            border-radius: 50%;
+            display: inline-block;
+            margin: 0 2px;
+            animation: typing 1s infinite;
+        }
+        
+        .typing-indicator span:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+        
+        .typing-indicator span:nth-child(3) {
+            animation-delay: 0.4s;
+        }
+        
+        @keyframes typing {
+            0%, 60%, 100% { transform: translateY(0); }
+            30% { transform: translateY(-5px); }
+        }
+        
+        .topic-header {
+            text-align: center;
+            color: #ff3385;
+            margin: 15px 0;
+            font-size: 20px;
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                flex-direction: column;
+                height: 90vh;
+            }
+            
+            .sidebar, .chat-container {
+                width: 100%;
+            }
+            
+            .sidebar {
+                padding: 15px;
+                max-height: 250px;
+            }
+            
+            .avatar {
+                width: 120px;
+                height: 120px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="sidebar">
+            <div class="avatar">
+                <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                    <circle cx="50" cy="40" r="25" fill="#FFD1DC" />
+                    <ellipse cx="50" cy="85" rx="25" ry="30" fill="#FFD1DC" />
+                    <circle cx="40" cy="35" r="4" fill="#333" />
+                    <circle cx="60" cy="35" r="4" fill="#333" />
+                    <path d="M 45 50 Q 50 55 55 50" stroke="#333" stroke-width="2" fill="none" />
+                    <path d="M 30 60 Q 50 80 70 60" stroke="#FF3385" stroke-width="3" fill="none" />
+                    <circle cx="50" cy="30" r="8" fill="#FF3385" />
+                </svg>
+            </div>
+            <h1 class="ai-name">Barbie AI Assistant</h1>
+            <p class="ai-title">Your Personal Lifestyle & Beauty Guide</p>
+            
+            <div class="features">
+                <h3>I Can Help You With:</h3>
+                <ul>
+                    <li><i class="fas fa-paint-brush"></i> Makeup Tutorials & Tips</li>
+                    <li><i class="fas fa-tshirt"></i> Fashion & Style Advice</li>
+                    <li><i class="fas fa-spa"></i> Skincare Routines</li>
+                    <li><i class="fas fa-heart"></i> Self-Care & Wellness</li>
+                    <li><i class="fas fa-utensils"></i> Healthy Eating Tips</li>
+                    <li><i class="fas fa-dumbbell"></i> Fitness & Exercise</li>
+                    <li><i class="fas fa-graduation-cap"></i> Career & Education</li>
+                    <li><i class="fas fa-hands-helping"></i> Relationships & Social</li>
+                </ul>
+            </div>
+        </div>
+        
+        <div class="chat-container">
+            <div class="chat-header">
+                <div style="width: 50px; height: 50px; background: linear-gradient(45deg, #ff85a1, #ff3385); border-radius: 50%; display: flex; align-items: center; justify-content: center;">
+                    <i class="fas fa-robot" style="color: white; font-size: 24px;"></i>
+                </div>
+                <h2>Barbie AI Assistant</h2>
+            </div>
+            
+            <div class="chat-messages" id="chat-messages">
+                <div class="message ai-message">
+                    Hi there! I'm your Barbie AI Assistant, here to help you with all things beauty, fashion, and lifestyle! 💖<br>
+                    What can I help you with today? Maybe a makeup tutorial, skincare advice, or fashion tips?
+                    <div class="message-time">Just now</div>
+                </div>
+            </div>
+            
+            <div class="quick-actions">
+                <button class="quick-btn" onclick="sendQuickMessage('Makeup tips for a night out')">Makeup Tips</button>
+                <button class="quick-btn" onclick="sendQuickMessage('Skincare routine for oily skin')">Skincare</button>
+                <button class="quick-btn" onclick="sendQuickMessage('Summer fashion trends')">Fashion Trends</button>
+                <button class="quick-btn" onclick="sendQuickMessage('Quick healthy meals')">Healthy Meals</button>
+                <button class="quick-btn" onclick="sendQuickMessage('Self-care ideas')">Self-Care</button>
+            </div>
+            
+            <div class="typing-indicator" id="typing-indicator">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+            
+            <div class="chat-input">
+                <input type="text" id="user-input" placeholder="Ask me anything about beauty, fashion, or lifestyle..." onkeypress="handleKeyPress(event)">
+                <button onclick="sendMessage()"><i class="fas fa-paper-plane"></i></button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const chatMessages = document.getElementById('chat-messages');
+        const userInput = document.getElementById('user-input');
+        const typingIndicator = document.getElementById('typing-indicator');
+        
+        // Sample responses for different topics
+        const responses = {
+            makeup: [
+                "For a natural daytime look, start with a light foundation or BB cream. Use a cream blush for a dewy finish and finish with a tinted lip balm!",
+                "Smokey eye tip: Start with a medium shade on the lid, a darker shade in the crease, and blend blend blend! Finish with mascara and false lashes for extra drama.",
+                "Long-lasting lipstick secret: Apply, blot with tissue, apply translucent powder, then apply another layer. It'll stay put for hours!",
+                "Contouring made easy: Apply bronzer under cheekbones, along the hairline, and under the jawline. Highlight the tops of cheekbones, down the nose, and cupid's bow."
+            ],
+            skincare: [
+                "Morning routine: Cleanser → Vitamin C serum → Moisturizer → SPF 50 sunscreen. Night routine: Oil cleanser → Foam cleanser → Retinol → Moisturizer.",
+                "For oily skin: Use a gel-based moisturizer and salicylic acid treatments. Don't skip moisturizer - it actually helps regulate oil production!",
+                "Weekly routine: Exfoliate 2-3 times a week, use a hydrating mask once a week, and a clay mask once a week to deep clean pores.",
+                "Always remove makeup before bed! Sleeping with makeup can clog pores and lead to breakouts and premature aging."
+            ],
+            fashion: [
+                "This season's trends: Pastel colors, wide-leg trousers, statement sleeves, and chunky loafers are everywhere!",
+                "Dress for your body type: If you're pear-shaped, try A-line skirts and dresses that highlight your waist. Add volume to shoulders with puff sleeves.",
+                "Capsule wardrobe essentials: A little black dress, well-fitting jeans, white button-down, blazer, neutral pumps, and a quality handbag.",
+                "Accessorize wisely: Choose one statement piece per outfit - either bold earrings, a necklace, or a bracelet. Don't overdo it!"
+            ],
+            wellness: [
+                "Self-care Sunday ideas: Face mask, bubble bath with essential oils, manicure, journaling, and your favorite book or movie!",
+                "Mental health tip: Practice gratitude daily. Write down three things you're grateful for each morning - it sets a positive tone for the day.",
+                "Quick stress relief: Try the 4-7-8 breathing technique - inhale for 4 seconds, hold for 7, exhale for 8. Repeat 4 times.",
+                "Digital detox: Set aside one hour before bed with no screens. Read a book, meditate, or practice gentle yoga instead."
+            ],
+            default: [
+                "I'd love to help with that! Could you tell me more about what you're looking for?",
+                "That's a great question! Let me share some tips that might help...",
+                "I have some ideas about that! Here's what I recommend...",
+                "That's such an important topic! Here are some things to consider..."
+            ]
+        };
+        
+        // Function to send a message
+        function sendMessage() {
+            const message = userInput.value.trim();
+            if (message === '') return;
+            
+            // Add user message to chat
+            addMessage(message, 'user');
+            userInput.value = '';
+            
+            // Show typing indicator
+            typingIndicator.style.display = 'block';
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+            
+            // Simulate AI thinking
+            setTimeout(() => {
+                typingIndicator.style.display = 'none';
+                generateResponse(message);
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+            }, 1500);
+        }
+        
+        // Function for quick message buttons
+        function sendQuickMessage(message) {
+            userInput.value = message;
+            sendMessage();
+        }
+        
+        // Handle Enter key press
+        function handleKeyPress(e) {
+            if (e.key === 'Enter') {
+                sendMessage();
+            }
+        }
+        
+        // Add message to chat
+        function addMessage(text, sender) {
+            const messageElement = document.createElement('div');
+            messageElement.classList.add('message', `${sender}-message`);
+            
+            const now = new Date();
+            const timeString = now.getHours().toString().padStart(2, '0') + ':' + 
+                             now.getMinutes().toString().padStart(2, '0');
+            
+            messageElement.innerHTML = `${text}<div class="message-time">${timeString}</div>`;
+            chatMessages.appendChild(messageElement);
+        }
+        
+        // Generate AI response
+        function generateResponse(userMessage) {
+            const lowerMessage = userMessage.toLowerCase();
+            let responseCategory = 'default';
+            
+            if (lowerMessage.includes('makeup') || lowerMessage.includes('cosmetic') || 
+                lowerMessage.includes('lipstick') || lowerMessage.includes('mascara')) {
+                responseCategory = 'makeup';
+            } 
+            else if (lowerMessage.includes('skin') || lowerMessage.includes('acne') || 
+                     lowerMessage.includes('moisturize') || lowerMessage.includes('complexion')) {
+                responseCategory = 'skincare';
+            }
+            else if (lowerMessage.includes('fashion') || lowerMessage.includes('outfit') || 
+                     lowerMessage.includes('dress') || lowerMessage.includes('style')) {
+                responseCategory = 'fashion';
+            }
+            else if (lowerMessage.includes('wellness') || lowerMessage.includes('self-care') || 
+                     lowerMessage.includes('mental') || lowerMessage.includes('stress')) {
+                responseCategory = 'wellness';
+            }
+            
+            const possibleResponses = responses[responseCategory];
+            const randomResponse = possibleResponses[Math.floor(Math.random() * possibleResponses.length)];
+            
+            addMessage(randomResponse, 'ai');
+            
+            // Add follow-up if it's the first AI response
+            if (chatMessages.querySelectorAll('.ai-message').length === 2) {
+                setTimeout(() => {
+                    addMessage("Is there anything specific you'd like to know more about? I'm here to help with all your lifestyle questions!", 'ai');
+                    chatMessages.scrollTop = chatMessages.scrollHeight;
+                }, 1000);
+            }
+        }
+    </script>
+</body>
+</html>
